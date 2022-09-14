@@ -1,3 +1,6 @@
+
+import math
+
 # Water Class Properties
 class Water_Properties:
     def __init__(self, tempC : float = 20)-> None:
@@ -13,7 +16,7 @@ class Water_Properties:
       Description: Function that calculates the vapor pressure. 
       Returns: Vapor pressure [bar]
       '''
-      pv = (0.61121*np.exp((18.678-self.tempC/234.5)*
+      pv = (0.61121*math.exp((18.678-self.tempC/234.5)*
                            (self.tempC/(257.14+self.tempC))))/100
       return pv
 
@@ -42,7 +45,7 @@ class Water_Properties:
       Returns: Dynamic Viscosity of water in [mPa*s]     
       '''
       a = 1.856e-11; b = 4209; c = 0.04527; d = -3.376e-05
-      visc = a * np.exp(b/self.tempK+c*self.tempK+d*self.tempK**2) 
+      visc = a * math.exp(b/self.tempK+c*self.tempK+d*self.tempK**2) 
       return visc
 
     def k_viscosity(self) -> float:
@@ -54,7 +57,7 @@ class Water_Properties:
       return k_viscosity
 
 #-------------------------------------------------------------------------------
-# Pipe line Properties Class with water_properties as inherent class 
+# Pipeline Properties Class with water_properties as inherent class 
 class Pipe_Properties(Water_Properties):
 
   def __init__(self, flow: float, dn: float, tempC:float = 20)-> None:
@@ -76,7 +79,7 @@ class Pipe_Properties(Water_Properties):
       circular pipe.
     Returns: velocity in meter per second (m/s)
     '''
-    v = self.flow/((np.pi*self.dn**2)/4)
+    v = self.flow/((math.pi*self.dn**2)/4)
     return v
   
   def reynolds(self) -> float:
@@ -86,7 +89,7 @@ class Pipe_Properties(Water_Properties):
      flow situations.
     Returns: reynolds number dimensionless quantity
     '''    
-    re = (4*self.flow)/(np.pi*self.dn*self.k_viscosity()*1e-6)
+    re = (4*self.flow)/(math.pi*self.dn*self.k_viscosity()*1e-6)
     return re
   
   def friction_factor(self, roughness: float) -> float:
@@ -99,9 +102,9 @@ class Pipe_Properties(Water_Properties):
     '''    
     r_roug = roughness/self.dn
     re = self.reynolds()
-    f = (-2*np.log10((r_roug/3.7)-(5.02/re)*
-                     np.log10(r_roug-(5.02/re)*
-                              np.log10(r_roug/3.7+13/re))))**(-2)
+    f = (-2*math.log10((r_roug/3.7)-(5.02/re)*
+                     math.log10(r_roug-(5.02/re)*
+                              math.log10(r_roug/3.7+13/re))))**(-2)
     return f
 
   def head_losses(self, roughness: float, plength: float) -> float:
@@ -135,7 +138,7 @@ class Pipe_Properties(Water_Properties):
     re = self.reynolds()
     v  = self.velocity()
     f_factor = dp*(self.dn/plength)*(2*self.gravity)/(v**2)
-    roug = 3.7*self.dn*(10**(-1/(2*np.sqrt(f_factor)))-2.51/(re*np.sqrt(f_factor)))
+    roug = 3.7*self.dn*(10**(-1/(2*math.sqrt(f_factor)))-2.51/(re*math.sqrt(f_factor)))
     if roug < 0:
       roug = 0
       return roug
@@ -179,7 +182,7 @@ class control_valve_Properties(Water_Properties):
       circular pipe.
     Returns: velocity in meter per second (m/s)
     '''
-    v = (self.flow)/((np.pi*self.dn**2)/4)
+    v = (self.flow)/((math.pi*self.dn**2)/4)
     return v
 
   def flow_coefficient(self)->float:
@@ -188,7 +191,7 @@ class control_valve_Properties(Water_Properties):
     Returns:
     '''
     rd = self.relative_density()
-    kv = (self.flow*3600)*np.sqrt(rd/(self.pu-self.pd))
+    kv = (self.flow*3600)*math.sqrt(rd/(self.pu-self.pd))
     return kv
 
   def zeta_value(self)-> float:
